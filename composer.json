@@ -19,7 +19,7 @@
     },
     "require": {
         "php": ">=7.0.0",
-        "symfony/process": "^v7.0.4"
+        "symfony/process": "^v4.4"
     },
     "minimum-stability": "dev"
 }

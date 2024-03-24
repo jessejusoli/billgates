@@ -1,0 +1,23 @@
+{
+    "name": "jessejusoli/billgates",
+    "description": "Automatically update Composer dependencies when loaded.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jesse Jusoli",
+            "email": "seu@email.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "JesseJusoli\\BillGates\\": "src/"
+        },
+        "files": [
+            "autoload_hook.php"
+        ]
+    },
+    "require": {
+        "php": ">=7.0.0"
+    }
+}

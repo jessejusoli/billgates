@@ -2,6 +2,7 @@
 
 namespace JesseJusoli\BillGates;
 
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class BillGates
@@ -14,7 +15,8 @@ class BillGates
      */
     public static function updateDependencies()
     {
-        $lastUpdateFile = __DIR__ . '/../last_update.txt';
+        $lastUpdateFile = __DIR__ . '/../last_update_datetime.txt';
+        $logFile = __DIR__ . '/../last_update_log.txt';
         $lastUpdate = file_exists($lastUpdateFile) ? file_get_contents($lastUpdateFile) : null;
 
         // Verifica se já se passou um dia desde a última atualização
@@ -24,7 +26,13 @@ class BillGates
 
             // Cria um novo processo para executar o comando Composer
             $process = new Process(['composer', 'update', '-d', dirname($composerPath)]);
+            $process->setTimeout(3600); // Define um tempo limite para o processo (opcional)
+
+            // Executa o processo e captura a saída
             $process->run();
+
+            // Salva o output do processo em um arquivo de log
+            file_put_contents($logFile, $process->getOutput() . PHP_EOL . $process->getErrorOutput());
 
             // Verifica se a execução do comando foi bem-sucedida
             if ($process->isSuccessful()) {
@@ -32,7 +40,7 @@ class BillGates
                 file_put_contents($lastUpdateFile, date('Y-m-d H:i:s'));
                 return true; // Indica que a atualização foi bem-sucedida
             } else {
-                throw new \RuntimeException('Erro ao atualizar as dependências do Composer: '.$process->getErrorOutput());
+                throw new ProcessFailedException($process);
             }
         } else {
             // A atualização já foi realizada nas últimas 24 horas
